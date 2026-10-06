@@ -1,0 +1,7 @@
+{% extends "_shared/document.html.j2" %}
+{% block content %}
+<h1 data-testid="fake-gated-title">Gated {{ item_slug }}</h1>
+{% access "theme-test-pro" %}GATED-PRO-CONTENT{% else %}PUBLIC-TEASER{% endaccess %}
+{% permission "theme-test.manage" %}MANAGE-LINK{% else %}NO-MANAGE-LINK{% endpermission %}
+{% region %}{% if viewer.user_id %}Hello {{ viewer.user_id }}{% else %}Sign in{% endif %}{% endregion %}
+{% endblock %}

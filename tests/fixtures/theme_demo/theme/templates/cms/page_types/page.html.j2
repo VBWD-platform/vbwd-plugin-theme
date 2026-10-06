@@ -1,0 +1,4 @@
+{#- theme_demo override of the CMS ``page`` type: the same page, plus one marker the
+    child-theme e2e (child-theme-override.spec.ts) looks for. -#}
+{% extends "cms/page_base.html.j2" %}
+{% block body_header %}<p class="theme-demo-banner" data-testid="theme-demo-banner">theme_demo</p>{% endblock %}

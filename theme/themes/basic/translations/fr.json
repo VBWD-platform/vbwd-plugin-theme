@@ -1,0 +1,7 @@
+{
+  "login.emailLabel": "Adresse E-mail",
+  "login.errors.loginFailed": "Erreur de connexion",
+  "login.loginButton": "Se Connecter",
+  "login.passwordLabel": "Mot de Passe",
+  "login.title": "Connexion"
+}

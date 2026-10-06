@@ -1,0 +1,77 @@
+/* /login — fe-user Login.vue's scoped styles, scoped to .login-page. */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--vbwd-login-page-bg, #f5f5f5);
+}
+
+.login-card {
+  background: var(--vbwd-login-card-bg, white);
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px var(--vbwd-login-card-shadow, rgba(0, 0, 0, 0.1));
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-page h1 {
+  margin-bottom: 30px;
+  text-align: center;
+  color: var(--vbwd-login-heading-text, #2c3e50);
+}
+
+.login-page .form-group {
+  margin-bottom: 20px;
+}
+
+.login-page label {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--vbwd-login-label-text, #666);
+  font-size: 0.9rem;
+}
+
+.login-page input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--vbwd-login-input-border, #ddd);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.login-page input:focus {
+  outline: none;
+  border-color: var(--vbwd-login-input-focus-border, #3498db);
+}
+
+.login-page button {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--vbwd-login-button-bg, #3498db);
+  color: var(--vbwd-login-button-text, white);
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.login-page button:hover:not(:disabled) {
+  background-color: var(--vbwd-login-button-hover-bg, #2980b9);
+}
+
+.login-page button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.login-page .error {
+  background-color: var(--vbwd-login-error-bg, #fee);
+  color: var(--vbwd-login-error-text, #c00);
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+}

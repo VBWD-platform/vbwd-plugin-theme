@@ -1,0 +1,9 @@
+{% extends "_shared/document.html.j2" %}
+{% block title %}{{ _('Access denied') }}{% endblock %}
+{% block content %}
+<section class="vbwd-theme-error" data-testid="error-403">
+  <h1 class="vbwd-theme-error__code">403</h1>
+  <p class="vbwd-theme-error__message">{{ _('You do not have permission to view this page.') }}</p>
+  <a class="vbwd-theme-error__home" href="/">{{ _('Back to the home page') }}</a>
+</section>
+{% endblock %}

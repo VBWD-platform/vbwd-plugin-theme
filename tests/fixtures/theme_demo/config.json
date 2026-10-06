@@ -1,0 +1,7 @@
+{
+  "debug_mode": {
+    "type": "boolean",
+    "default": false,
+    "description": "Verbose logging for this plugin."
+  }
+}

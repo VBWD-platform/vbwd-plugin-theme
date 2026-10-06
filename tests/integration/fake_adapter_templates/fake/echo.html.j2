@@ -1,0 +1,10 @@
+{% extends "_shared/document.html.j2" %}
+{% block content %}
+<dl data-testid="fake-echo">
+  <dt>path</dt><dd>path={{ echoed_path }}</dd>
+  <dt>item</dt><dd>item={{ item_slug }}</dd>
+  <dt>colour</dt><dd>colour={{ colour }}</dd>
+  <dt>viewer</dt><dd>viewer={{ viewer.user_id or "anonymous" }}</dd>
+  <dt>language</dt><dd>lang={{ echoed_language }}</dd>
+</dl>
+{% endblock %}

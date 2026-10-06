@@ -1,0 +1,36 @@
+/* The document base of every themed page — fe-user App.vue's global rules, ported
+   (the SPA applies them to every route). Colours keep the SPA's token chains. */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--vbwd-page-bg, #f5f5f5);
+  color: var(--vbwd-text-body, #333);
+}
+
+/* App.vue `#app.app--public-light`: public pages render in the CMS (light) roles.
+   Every themed page is a public page, so the remap sits on <body>. */
+body {
+  background-color: var(--color-bg, #ffffff);
+  color: var(--color-text, #0f172a);
+
+  --vbwd-page-bg: var(--color-bg, #ffffff);
+  --vbwd-card-bg: var(--color-surface, #ffffff);
+  --vbwd-text-body: var(--color-text, #333333);
+  --vbwd-text-heading: var(--color-heading, var(--color-text, #2c3e50));
+  --vbwd-text-muted: var(--color-text-muted, #666666);
+  --vbwd-color-primary: var(--color-accent, #2563eb);
+  --vbwd-color-primary-hover: var(--color-accent-dark, #1d4ed8);
+  --vbwd-border-color: var(--color-border, #e2e8f0);
+  --vbwd-border-light: var(--vbwd-base-border-light, #eeeeee);
+
+  --color-text-primary: var(--color-text, #0f172a);
+  --color-text-secondary: var(--color-text-muted, #475569);
+  --color-background: var(--color-bg, #ffffff);
+  --color-background-secondary: var(--color-surface, #ffffff);
+  --color-primary: var(--color-accent, #2563eb);
+}

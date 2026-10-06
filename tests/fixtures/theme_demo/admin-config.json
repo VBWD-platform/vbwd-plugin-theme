@@ -1,0 +1,15 @@
+{
+  "tabs": [
+    {
+      "id": "general",
+      "label": "General",
+      "fields": [
+        {
+          "key": "debug_mode",
+          "label": "Debug logging",
+          "component": "checkbox"
+        }
+      ]
+    }
+  ]
+}

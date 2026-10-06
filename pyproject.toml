@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vbwd-plugin-theme"
+version = "1.0.0"
+description = "VBWD backend plugin: theme"
+requires-python = ">=3.11"
+license = { text = "BSL-1.1" }
+dependencies = []
+
+# Runtime lives inside the vbwd-backend host, which provides `vbwd.*` (core) and
+# any sibling plugins declared in PluginMetadata.dependencies. Those are NOT pinned
+# here so the wheel stays host-agnostic; install the host separately.
+
+[tool.setuptools]
+# The repo root IS the plugins/theme/ directory; remap it so the wheel exposes
+# the `plugins.theme` package that runtime imports.
+package-dir = { "plugins.theme" = "." }
+packages = [
+    "plugins.theme",
+    "plugins.theme.theme",
+]
+
+[tool.setuptools.package-data]
+"plugins.theme" = [
+    "*.json",
+    "populate_db.py",
+]
+"plugins.theme.theme" = [
+    "themes/*/templates/**/*.j2",
+]

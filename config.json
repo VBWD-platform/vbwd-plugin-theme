@@ -1,0 +1,12 @@
+{
+  "debug_mode": {
+    "type": "boolean",
+    "default": false,
+    "description": "Verbose logging for this plugin."
+  },
+  "active_theme": {
+    "type": "string",
+    "default": "basic",
+    "description": "Slug of the active theme. An unknown slug falls back to basic."
+  }
+}

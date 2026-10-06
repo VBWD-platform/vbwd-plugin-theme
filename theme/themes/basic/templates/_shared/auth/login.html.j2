@@ -1,0 +1,30 @@
+{#- /login — the twin of fe-user core Login.vue (S152-07 A). Same testids and copy.
+    data-vbwd-guest-only: the runtime sends a live session to /dashboard before the
+    form ever shows (the SPA guard's no-flash rule); an expired one is purged. -#}
+{% extends "_shared/document.html.j2" %}
+{% block title %}{{ _('login.title') }}{% endblock %}
+{% block head %}
+{{- super() }}
+  <style data-theme-login>[data-auth="pending"] .login-page{visibility:hidden}</style>
+{%- endblock %}
+{% block body_attributes %} data-auth="pending" data-vbwd-guest-only{% endblock %}
+{% block body %}
+  <div class="login-page">
+    <div class="login-card">
+      <h1>{{ _('login.title') }}</h1>
+      <form method="post" action="/_render/_fragment/login" hx-post="/_render/_fragment/login" hx-target="#login-result" hx-swap="innerHTML" hx-disabled-elt="find button[type=submit]">
+        <div class="form-group">
+          <label for="email">{{ _('login.emailLabel') }}</label>
+          <input id="email" name="email" type="email" data-testid="email" required>
+        </div>
+        <div class="form-group">
+          <label for="password">{{ _('login.passwordLabel') }}</label>
+          <input id="password" name="password" type="password" data-testid="password" required>
+        </div>
+        <input type="hidden" name="redirect" value="{{ redirect }}">
+        <div id="login-result"></div>
+        <button type="submit" data-testid="login-button">{{ _('login.loginButton') }}</button>
+      </form>
+    </div>
+  </div>
+{%- endblock %}

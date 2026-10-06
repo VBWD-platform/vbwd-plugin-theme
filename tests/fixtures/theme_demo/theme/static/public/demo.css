@@ -1,0 +1,5 @@
+/* theme_demo — proves a child theme's stylesheet and tokens reach themed pages. */
+.theme-demo-banner {
+  color: var(--vbwd-color-primary);
+  font-weight: 600;
+}

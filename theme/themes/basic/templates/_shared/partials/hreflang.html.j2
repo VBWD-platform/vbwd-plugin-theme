@@ -1,0 +1,13 @@
+{#- hreflang alternates (D13 / W3), the same set the CMS SEO head builds
+    (cms ``seo_meta_builder._hreflang_tags``): self, each translation, then
+    x-default = self. ``language_alternates`` entries carry ``language`` + ``url``.
+    Like the SEO head, an empty list still emits self + x-default; without a
+    ``current_url`` (a page with no canonical) nothing is emitted. -#}
+{%- set alternates = language_alternates|default([]) %}
+{%- if current_url is defined and current_url and language is defined and language %}
+<link rel="alternate" hreflang="{{ language }}" href="{{ current_url }}">
+{%- for alternate in alternates %}
+<link rel="alternate" hreflang="{{ alternate.language }}" href="{{ alternate.url }}">
+{%- endfor %}
+<link rel="alternate" hreflang="x-default" href="{{ current_url }}">
+{%- endif %}

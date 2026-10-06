@@ -1,0 +1,7 @@
+{
+  "login.emailLabel": "メールアドレス",
+  "login.errors.loginFailed": "ログインに失敗しました",
+  "login.loginButton": "ログイン",
+  "login.passwordLabel": "パスワード",
+  "login.title": "ログイン"
+}

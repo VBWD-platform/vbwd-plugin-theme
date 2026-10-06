@@ -1,0 +1,30 @@
+{#- Form controls. ``testid`` becomes ``data-testid`` so themed pages keep the SPA e2e contract (D2). -#}
+
+{% macro input(name, label, type="text", value="", testid=none, required=false, placeholder="") -%}
+<label class="vbwd-theme-field">
+  <span class="vbwd-theme-field__label">{{ label }}</span>
+  <input class="vbwd-theme-field__control" type="{{ type }}" name="{{ name }}" value="{{ value }}"
+    {%- if placeholder %} placeholder="{{ placeholder }}"{% endif %}
+    {%- if required %} required{% endif %}
+    {%- if testid %} data-testid="{{ testid }}"{% endif %}>
+</label>
+{%- endmacro %}
+
+{% macro select(name, label, options, selected=none, testid=none, required=false) -%}
+<label class="vbwd-theme-field">
+  <span class="vbwd-theme-field__label">{{ label }}</span>
+  <select class="vbwd-theme-field__control" name="{{ name }}"
+    {%- if required %} required{% endif %}
+    {%- if testid %} data-testid="{{ testid }}"{% endif %}>
+    {%- for option_value, option_label in options %}
+    <option value="{{ option_value }}"{% if option_value == selected %} selected{% endif %}>{{ option_label }}</option>
+    {%- endfor %}
+  </select>
+</label>
+{%- endmacro %}
+
+{% macro button(label, type="submit", testid=none, disabled=false) -%}
+<button class="vbwd-theme-button" type="{{ type }}"
+  {%- if disabled %} disabled{% endif %}
+  {%- if testid %} data-testid="{{ testid }}"{% endif %}>{{ label }}</button>
+{%- endmacro %}

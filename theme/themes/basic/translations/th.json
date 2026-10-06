@@ -1,0 +1,7 @@
+{
+  "login.emailLabel": "อีเมล",
+  "login.errors.loginFailed": "ล็อกอินล้มเหลว",
+  "login.loginButton": "ล็อกอิน",
+  "login.passwordLabel": "รหัสผ่าน",
+  "login.title": "ล็อกอิน"
+}

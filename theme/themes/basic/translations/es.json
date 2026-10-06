@@ -1,0 +1,7 @@
+{
+  "login.emailLabel": "Correo Electrónico",
+  "login.errors.loginFailed": "Error al iniciar sesión",
+  "login.loginButton": "Iniciar Sesión",
+  "login.passwordLabel": "Contraseña",
+  "login.title": "Iniciar Sesión"
+}

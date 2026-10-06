@@ -1,0 +1,9 @@
+/* Runtime states set by vbwd-theme.js (S152 D4). No colours here: they come
+   from CMS styles and theme tokens. */
+
+/* Auth-required pages render with <body data-auth="pending">; private chrome
+   stays hidden until the runtime confirms the session ("user"/"anonymous"),
+   matching the SPA's no-flash rule. */
+[data-auth="pending"] .vbwd-private-chrome {
+  visibility: hidden;
+}

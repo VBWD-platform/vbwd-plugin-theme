@@ -1,0 +1,12 @@
+{#- Language switcher over the page's translations (D13 / W3). A click sets the
+    ``vbwd_lang`` cookie (vbwd-theme.js, ``data-vbwd-language``) so the CMS
+    routing rules keep working; an empty list renders nothing. -#}
+{%- set alternates = language_alternates|default([]) %}
+{%- if alternates %}
+<nav class="vbwd-theme-language-switcher" data-testid="language-switcher" aria-label="{{ _('Language') }}">
+  <span aria-current="true" lang="{{ language }}" data-testid="language-switch-{{ language }}">{{ language|upper }}</span>
+  {%- for alternate in alternates %}
+  <a href="{{ alternate.url }}" hreflang="{{ alternate.language }}" lang="{{ alternate.language }}" data-testid="language-switch-{{ alternate.language }}" data-vbwd-language="{{ alternate.language }}">{{ alternate.language|upper }}</a>
+  {%- endfor %}
+</nav>
+{%- endif %}

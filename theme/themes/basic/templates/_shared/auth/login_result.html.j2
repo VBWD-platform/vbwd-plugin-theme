@@ -1,0 +1,8 @@
+{#- The login fragment's answer: the runtime's session directive, or Login.vue's error. -#}
+{%- if session -%}
+<script type="application/json" data-vbwd-session>{{ session|tojson }}</script>
+{%- else -%}
+<div class="error" data-testid="error-message">
+  {{ error_message or _('login.errors.loginFailed') }}
+</div>
+{%- endif -%}

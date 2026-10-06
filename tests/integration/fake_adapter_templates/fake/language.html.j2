@@ -1,0 +1,11 @@
+{% extends "_shared/document.html.j2" %}
+{% block content %}
+<dl data-testid="fake-language">
+  <dd>pre={{ echoed_language }}</dd>
+  <dd>greeting={{ _('fake.greeting') }}</dd>
+  <dd>farewell={{ _('fake.farewell') }}</dd>
+  <dd>inner-cookie={{ inner_cookie }}</dd>
+  <dd>inner-accept-language={{ inner_accept_language }}</dd>
+</dl>
+{% region %}pre={{ echoed_language }} greeting={{ _('fake.greeting') }}{% endregion %}
+{% endblock %}
