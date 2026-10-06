@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 from typing import Iterator, List, Tuple
 
+import pytest
+
 PLUGINS_DIRECTORY = Path(__file__).resolve().parents[3]
 THEME_PREFIX = "theme"
 FRONTEND_MODE_VARIABLE = "VBWD_FRONTEND_MODE"
@@ -120,7 +122,11 @@ def test_theme_adapters_never_import_domain_plugins():
         for directory in _plugin_directories()
         if directory.name.startswith(THEME_PREFIX + "_")
     ]
-    assert adapter_directories, "no theme adapter found — the walk is broken"
+    assert (
+        PLUGINS_DIRECTORY / THEME_PREFIX in _plugin_directories()
+    ), "the walk does not find the theme plugin itself — it is broken"
+    if not adapter_directories:
+        pytest.skip("no theme_* adapter checked out next to theme (isolated CI)")
     for directory in adapter_directories:
         for file_path in _python_files(directory):
             for line, plugin_name in _imported_plugin_names(_parse(file_path)):

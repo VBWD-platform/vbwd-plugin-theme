@@ -1,11 +1,18 @@
 name: Tests
 
+# One structure for every vbwd-plugin-theme* repo; only PLUGIN differs.
+# Both jobs clone the declared plugin dependencies (.github/clone-plugin-dependencies.sh)
+# next to the plugin inside a vbwd-backend checkout, then run on the runner.
+
 on:
   push:
     branches: ['*']
   pull_request:
     branches: [main]
   workflow_dispatch:
+
+env:
+  PLUGIN: theme
 
 jobs:
   ci:
@@ -32,41 +39,88 @@ jobs:
           cache: 'pip'
           cache-dependency-path: vbwd-backend/requirements.txt
 
+      - name: Clone plugin dependencies
+        working-directory: vbwd-backend
+        run: bash "plugins/${PLUGIN}/.github/clone-plugin-dependencies.sh" "${PLUGIN}"
+
       - name: Install Python dependencies
-        run: pip install -r vbwd-backend/requirements.txt
+        working-directory: vbwd-backend
+        run: |
+          pip install -r requirements.txt
+          for requirements_file in plugins/*/requirements.txt; do
+            pip install -r "${requirements_file}"
+          done
 
       - name: Style check — Black
-        run: black --check --diff vbwd-backend/plugins/theme/ --exclude='/(\.git|__pycache__|\.pytest_cache)/'
+        run: black --check --diff "vbwd-backend/plugins/${PLUGIN}/" --exclude='/(\.git|__pycache__|\.pytest_cache)/'
 
       - name: Style check — Flake8
-        run: flake8 vbwd-backend/plugins/theme/ --max-line-length=120 --extend-ignore=E203,W503 --exclude=.git,__pycache__,.pytest_cache
+        run: flake8 "vbwd-backend/plugins/${PLUGIN}/" --max-line-length=120 --extend-ignore=E203,W503 --exclude=.git,__pycache__,.pytest_cache
 
-      - name: Style check — Mypy
-        run: mypy vbwd-backend/plugins/theme/ --exclude tests/ --ignore-missing-imports --no-error-summary --python-version=3.11 || true
+      - name: Style check — Mypy (non-blocking)
+        run: mypy "vbwd-backend/plugins/${PLUGIN}/" --exclude tests/ --ignore-missing-imports --no-error-summary --python-version=3.11 || true
 
       - name: Run unit tests
         working-directory: vbwd-backend
-        run: |
-          if [ -d "plugins/theme/tests/unit" ]; then
-            python -m pytest plugins/theme/tests/unit/ -v --tb=short
-          else
-            echo "No unit tests yet"
-          fi
+        run: python -m pytest "plugins/${PLUGIN}/tests/unit/" -v --tb=short
 
       - name: Set up Node 22
         uses: actions/setup-node@v4
         with:
           node-version: '22'
 
-      - name: Run runtime JS tests (node:test, no npm deps)
+      - name: Run runtime JS tests (node:test, one file at a time)
         working-directory: vbwd-backend
-        # Node 22 takes globs, not directories, as --test arguments.
-        run: node --test 'plugins/theme/tests/js/*.test.mjs'
+        # Node 22 rejects a directory as a --test argument, so each file is passed.
+        run: |
+          shopt -s nullglob
+          test_files=("plugins/${PLUGIN}"/tests/js/*.test.mjs)
+          if [ "${#test_files[@]}" -eq 0 ]; then
+            echo "No runtime JS tests"
+            exit 0
+          fi
+          for test_file in "${test_files[@]}"; do
+            node --test "${test_file}"
+          done
 
   integration:
     name: Integration — theme
     needs: ci
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: vbwd
+          POSTGRES_PASSWORD: vbwd
+          POSTGRES_DB: vbwd
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      # Domain plugins the integration suite boots (its conftest BOOT_ORDER) beyond
+      # the declared dependencies; cloned with their own dependencies.
+      INTEGRATION_PEER_PLUGINS: ""
+      # Most integration conftests append "_test" to this database (vbwd -> vbwd_test).
+      DATABASE_URL: postgresql://vbwd:vbwd@localhost:5432/vbwd
+      REDIS_URL: redis://localhost:6379/1
+      PYTHONPATH: ${{ github.workspace }}/vbwd-backend
+      VBWD_VAR_DIR: ${{ github.workspace }}/var
 
     steps:
       - name: Clone vbwd-backend
@@ -81,32 +135,37 @@ jobs:
         with:
           path: vbwd-backend/plugins/theme
 
-      - name: Create plugins.json (enable theme + dependencies)
-        run: |
-          echo '{"plugins":{"theme":{"enabled":true,"version":"1.0.0","source":"local"}}}' > vbwd-backend/plugins/plugins.json
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: vbwd-backend/requirements.txt
 
-      - name: Start services
+      - name: Clone plugin dependencies and integration peers
         working-directory: vbwd-backend
-        run: docker compose up -d --build
-
-      - name: Wait for API
         run: |
-          for i in $(seq 1 30); do
-            curl -sf http://localhost:5000/api/v1/health > /dev/null 2>&1 && break
-            sleep 2
+          read -r -a peer_plugins <<< "${INTEGRATION_PEER_PLUGINS}"
+          bash "plugins/${PLUGIN}/.github/clone-plugin-dependencies.sh" "${PLUGIN}" "${peer_plugins[@]}"
+
+      - name: Install Python dependencies
+        working-directory: vbwd-backend
+        run: |
+          pip install -r requirements.txt
+          for requirements_file in plugins/*/requirements.txt; do
+            pip install -r "${requirements_file}"
           done
-          curl -sf http://localhost:5000/api/v1/health || exit 1
+
+      - name: Prepare the databases
+        working-directory: vbwd-backend
+        # Both get the migrated schema: theme boots on DATABASE_URL itself, the adapters
+        # on vbwd_test — whose tables must exist at boot, when on_enable syncs registries.
+        run: |
+          mkdir -p "${VBWD_VAR_DIR}"
+          PGPASSWORD=vbwd createdb -h localhost -U vbwd vbwd_test
+          alembic upgrade heads
+          DATABASE_URL="${DATABASE_URL}_test" alembic upgrade heads
 
       - name: Run integration tests
         working-directory: vbwd-backend
-        run: |
-          if [ -d "plugins/theme/tests/integration" ] && find plugins/theme/tests/integration -name 'test_*.py' | grep -q .; then
-            docker compose run --rm test pytest plugins/theme/tests/integration/ -v --tb=short
-          else
-            echo "No integration tests yet — skipping"
-          fi
-
-      - name: Cleanup
-        if: always()
-        working-directory: vbwd-backend
-        run: docker compose down -v
+        run: python -m pytest "plugins/${PLUGIN}/tests/integration/" -v --tb=short
