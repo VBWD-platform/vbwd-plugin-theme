@@ -322,9 +322,103 @@ From fe-user `plugins/subscription` TariffPlanCollection.vue (shadows and the `t
 | `--vbwd-subscription-toolbar-view-active-shadow` | `.collection-toolbar__view-btn.active` box-shadow | `rgba(0, 0, 0, 0.1)` |
 | `--vbwd-subscription-summary-description-text` | `.plan-details .plan-description` color | `#6b7280` |
 
+### theme_checkout (`--vbwd-checkout-*`)
+
+From fe-user core `components/checkout` EmailBlock.vue, BillingAddressBlock.vue,
+PaymentMethodsBlock.vue (`.email-block`, `.billing-address-block` and `.payment-methods-block`
+share the `block-*` tokens) and TermsCheckbox.vue, plus `plugins/checkout` PublicCheckoutView.vue,
+CheckoutConfirmationView.vue (one status token pair for the banner and the badge) and
+TokenBundleCollection.vue, and `plugins/stripe-payment` StripeSuccessView.vue. fe-core
+CouponInput.vue and PriceDisplay.vue keep their own `var()` chains. The unscoped `.card`, `.btn`,
+`.public-checkout`, state and spinner rules are checkout-wide: the selling adapters' pay pages
+(theme_booking) reuse them, so one `button-*` / `card-*` override restyles every checkout surface.
+
+| Token | Where used | SPA default |
+|---|---|---|
+| `--vbwd-checkout-block-border` | `.email-block` border; `.billing-address-block` border; `.payment-methods-block` border | `#e0e0e0` |
+| `--vbwd-checkout-block-bg` | `.email-block` background; `.billing-address-block` background; `.payment-methods-block` background | `white` |
+| `--vbwd-checkout-email-success-border` | `.email-block.success` border-color | `#27ae60` |
+| `--vbwd-checkout-email-success-bg` | `.email-block.success` background | `#e8f8f0` |
+| `--vbwd-checkout-email-error-border` | `.email-block.error` border-color | `#e74c3c` |
+| `--vbwd-checkout-block-heading-text` | `.email-block h3` color; `.billing-address-block h3` color; `.payment-methods-block h3` color | `#2c3e50` |
+| `--vbwd-checkout-field-border` | `.email-block input` border; `.billing-address-block input` border; `.billing-address-block select` border | `#ddd` |
+| `--vbwd-checkout-field-disabled-bg` | `.email-block input:disabled` background | `#f5f5f5` |
+| `--vbwd-checkout-field-disabled-text` | `.email-block input:disabled` color | `#666` |
+| `--vbwd-checkout-email-hint-text` | `.email-block .hint` color | `#666` |
+| `--vbwd-checkout-email-hint-error-text` | `.email-block .text-red` color | `#e74c3c` |
+| `--vbwd-checkout-button-primary-bg` | `.email-block .btn.primary` background; `.terms-checkbox .btn.primary` background; `.btn.primary` background-color; `.stripe-success .btn-primary` background | `#3498db` |
+| `--vbwd-checkout-button-primary-text` | `.email-block .btn.primary` color; `.terms-checkbox .btn.primary` color; `.btn.primary` color; `.stripe-success .btn-primary` color | `white` |
+| `--vbwd-checkout-button-primary-hover-bg` | `.email-block .btn.primary:hover:not(:disabled)` background; `.terms-checkbox .btn.primary:hover` background; `.btn.primary:hover:not(:disabled)` background-color; `.stripe-success .btn-primary:hover` background | `#2980b9` |
+| `--vbwd-checkout-button-primary-disabled-bg` | `.email-block .btn.primary:disabled` background; `.btn.primary:disabled` background-color | `#95a5a6` |
+| `--vbwd-checkout-button-secondary-bg` | `.email-block .btn.secondary` background; `.btn.secondary` background-color | `#ecf0f1` |
+| `--vbwd-checkout-email-button-secondary-text` | `.email-block .btn.secondary` color | `#333` |
+| `--vbwd-checkout-button-secondary-hover-bg` | `.email-block .btn.secondary:hover` background; `.btn.secondary:hover` background-color | `#bdc3c7` |
+| `--vbwd-checkout-email-error-text` | `.email-block .error-message` color | `#e74c3c` |
+| `--vbwd-checkout-strength-weak` | `.email-block .strength-bar.weak` background; `.email-block .strength-label.weak` color | `#e74c3c` |
+| `--vbwd-checkout-strength-track` | `.email-block .strength-bar.weak` background; `.email-block .strength-bar.medium` background | `#ddd` |
+| `--vbwd-checkout-strength-medium` | `.email-block .strength-bar.medium` background; `.email-block .strength-label.medium` color | `#f39c12` |
+| `--vbwd-checkout-strength-strong` | `.email-block .strength-bar.strong` background; `.email-block .strength-label.strong` color | `#27ae60` |
+| `--vbwd-checkout-link-text` | `.email-block .forgot-password-link` color; `.terms-checkbox .checkbox-label a` color | `#3498db` |
+| `--vbwd-checkout-email-logged-in-text` | `.email-block .logged-in-info` color | `#27ae60` |
+| `--vbwd-checkout-field-label-text` | `.billing-address-block label` color | `#333` |
+| `--vbwd-checkout-field-focus-border` | `.billing-address-block input:focus` border-color; `.billing-address-block select:focus` border-color | `#3498db` |
+| `--vbwd-checkout-field-focus-ring` | `.billing-address-block input:focus` box-shadow; `.billing-address-block select:focus` box-shadow | `rgba(52, 152, 219, 0.1)` |
+| `--vbwd-checkout-field-error-border` | `.billing-address-block input.error` border-color; `.billing-address-block select.error` border-color | `#e74c3c` |
+| `--vbwd-checkout-method-border` | `.payment-methods-block .method-option` border | `#e0e0e0` |
+| `--vbwd-checkout-method-hover-border` | `.payment-methods-block .method-option:hover` border-color | `#3498db` |
+| `--vbwd-checkout-method-selected-border` | `.payment-methods-block .method-option.selected` border-color | `#3498db` |
+| `--vbwd-checkout-method-selected-bg` | `.payment-methods-block .method-option.selected` background | `#f0f7ff` |
+| `--vbwd-checkout-method-name-text` | `.payment-methods-block .method-name` color | `#2c3e50` |
+| `--vbwd-checkout-method-description-text` | `.payment-methods-block .method-description` color | `#666` |
+| `--vbwd-checkout-method-instructions-bg` | `.payment-methods-block .method-instructions` background | `#f8f9fa` |
+| `--vbwd-checkout-method-instructions-text` | `.payment-methods-block .method-instructions` color | `#495057` |
+| `--vbwd-checkout-method-state-text` | `.payment-methods-block .error` color; `.payment-methods-block .empty` color | `#666` |
+| `--vbwd-checkout-method-error-text` | `.payment-methods-block .error` color | `#e74c3c` |
+| `--vbwd-checkout-link-hover-text` | `.terms-checkbox .checkbox-label a:hover` color | `#2980b9` |
+| `--vbwd-checkout-popup-overlay` | `.terms-checkbox .popup-overlay` background | `rgba(0, 0, 0, 0.5)` |
+| `--vbwd-checkout-popup-bg` | `.terms-checkbox .popup-content` background | `white` |
+| `--vbwd-checkout-popup-shadow` | `.terms-checkbox .popup-content` box-shadow | `rgba(0, 0, 0, 0.15)` |
+| `--vbwd-checkout-popup-divider` | `.terms-checkbox .popup-header` border-bottom; `.terms-checkbox .popup-footer` border-top | `#eee` |
+| `--vbwd-checkout-popup-heading-text` | `.terms-checkbox .popup-header h3` color; `.terms-checkbox .popup-body h3` color; `.terms-checkbox .popup-body h4` color | `#2c3e50` |
+| `--vbwd-checkout-popup-close-text` | `.terms-checkbox .close-btn` color | `#666` |
+| `--vbwd-checkout-popup-close-hover-text` | `.terms-checkbox .close-btn:hover` color | `#333` |
+| `--vbwd-checkout-popup-body-text` | `.terms-checkbox .popup-body` color | `#333` |
+| `--vbwd-checkout-title-text` | `.public-checkout h1` color | `#2c3e50` |
+| `--vbwd-checkout-order-total-border` | `.order-total` border-top | `#e5e7eb` |
+| `--vbwd-checkout-state-text` | `.loading-state` color; `.error-state` color; `.no-plan` color | `#666` |
+| `--vbwd-checkout-spinner-track` | `.spinner` border | `#f3f3f3` |
+| `--vbwd-checkout-spinner-indicator` | `.spinner` border-top | `#3498db` |
+| `--vbwd-checkout-card-bg` | `.card` background | `white` |
+| `--vbwd-checkout-card-shadow` | `.card` box-shadow | `rgba(0, 0, 0, 0.05)` |
+| `--vbwd-checkout-card-heading-text` | `.card h2` color | `#2c3e50` |
+| `--vbwd-checkout-card-heading-border` | `.card h2` border-bottom | `#eee` |
+| `--vbwd-checkout-requirements-bg` | `.requirements` background | `#fff3cd` |
+| `--vbwd-checkout-requirements-border` | `.requirements` border | `#ffc107` |
+| `--vbwd-checkout-requirements-text` | `.requirements p` color; `.requirements ul` color | `#856404` |
+| `--vbwd-checkout-button-secondary-text` | `.btn.secondary` color | `#2c3e50` |
+| `--vbwd-checkout-error-message-bg` | `.error-message` background | `#fee` |
+| `--vbwd-checkout-error-message-text` | `.error-message` color | `#c00` |
+| `--vbwd-checkout-status-paid-bg` | `.checkout-confirmation .confirmation-banner--paid` background; `.checkout-confirmation .confirmation-banner--authorized` background; `.checkout-confirmation .status-badge.paid` background; `.checkout-confirmation .status-badge.authorized` background | `#dcfce7` |
+| `--vbwd-checkout-status-paid-text` | `.checkout-confirmation .confirmation-banner--paid` color; `.checkout-confirmation .confirmation-banner--authorized` color; `.checkout-confirmation .status-badge.paid` color; `.checkout-confirmation .status-badge.authorized` color | `#166534` |
+| `--vbwd-checkout-status-pending-bg` | `.checkout-confirmation .confirmation-banner--pending` background; `.checkout-confirmation .status-badge.pending` background | `#fef9c3` |
+| `--vbwd-checkout-status-pending-text` | `.checkout-confirmation .confirmation-banner--pending` color; `.checkout-confirmation .status-badge.pending` color | `#854d0e` |
+| `--vbwd-checkout-status-failed-bg` | `.checkout-confirmation .confirmation-banner--failed` background; `.checkout-confirmation .confirmation-banner--cancelled` background; `.checkout-confirmation .status-badge.failed` background; `.checkout-confirmation .status-badge.cancelled` background | `#fee2e2` |
+| `--vbwd-checkout-status-failed-text` | `.checkout-confirmation .confirmation-banner--failed` color; `.checkout-confirmation .confirmation-banner--cancelled` color; `.checkout-confirmation .status-badge.failed` color; `.checkout-confirmation .status-badge.cancelled` color | `#991b1b` |
+| `--vbwd-checkout-confirmation-row-border` | `.checkout-confirmation .confirmation-row` border-bottom | `#f3f4f6` |
+| `--vbwd-checkout-confirmation-label-text` | `.checkout-confirmation .confirmation-label` color | `#6b7280` |
+| `--vbwd-checkout-confirmation-value-text` | `.checkout-confirmation .confirmation-value` color | `#1f2937` |
+| `--vbwd-checkout-confirmation-mono-text` | `.checkout-confirmation .confirmation-mono` color | `#6b7280` |
+| `--vbwd-checkout-line-items-heading-text` | `.checkout-confirmation .line-items h3` color | `#374151` |
+| `--vbwd-checkout-line-items-header-text` | `.checkout-confirmation .line-items-table th` color | `#6b7280` |
+| `--vbwd-checkout-line-items-header-border` | `.checkout-confirmation .line-items-table th` border-bottom | `#e5e7eb` |
+| `--vbwd-checkout-line-items-row-border` | `.checkout-confirmation .line-items-table td` border-bottom | `#f3f4f6` |
+| `--vbwd-checkout-line-items-footer-border` | `.checkout-confirmation .line-items-table tfoot td` border-top | `#e5e7eb` |
+| `--vbwd-checkout-line-items-total-text` | `.checkout-confirmation .total-label` color | `#374151` |
+| `--vbwd-checkout-token-bundle-add-text` | `.token-bundle-card__add` color | `#fff` |
+
 ### theme_booking (`--vbwd-booking-*`)
 
-From fe-user `plugins/booking` BookingCatalogue.vue, BookingResourceDetail.vue, BookingForm.vue, BookingCheckout.vue, BookingSuccess.vue (one status token pair for the banner and the badge) and BookingCancel.vue.
+From fe-user `plugins/booking` BookingCatalogue.vue, BookingResourceDetail.vue, BookingForm.vue, BookingCheckout.vue, BookingSuccess.vue (one status token pair for the banner and the badge) and BookingCancel.vue. The pay page's shared `.card`, `.btn` and `.requirements` colours are theme_checkout's `--vbwd-checkout-*` tokens (S152-07c).
 
 | Token | Where used | SPA default |
 |---|---|---|
@@ -339,14 +433,6 @@ From fe-user `plugins/booking` BookingCatalogue.vue, BookingResourceDetail.vue, 
 | `--vbwd-booking-slot-selected-bg` | `.booking-slot.selected` background | `#e8f4fd` |
 | `--vbwd-booking-form-label-text` | `.booking-form__field label` color | `#374151` |
 | `--vbwd-booking-form-required-text` | `.booking-form__required` color | `#dc2626` |
-| `--vbwd-booking-card-shadow` | `.card` box-shadow | `rgba(0, 0, 0, 0.05)` |
-| `--vbwd-booking-requirements-bg` | `.requirements` background | `#fff3cd` |
-| `--vbwd-booking-requirements-border` | `.requirements` border | `#ffc107` |
-| `--vbwd-booking-requirements-text` | `.requirements p` color; `.requirements ul` color | `#856404` |
-| `--vbwd-booking-button-primary-hover-bg` | `.btn.primary:hover` background-color; `.btn.primary:hover:not(:disabled)` background-color | `#2980b9` |
-| `--vbwd-booking-button-primary-disabled-bg` | `.btn.primary:disabled` background-color | `#95a5a6` |
-| `--vbwd-booking-button-secondary-bg` | `.btn.secondary` background-color | `#ecf0f1` |
-| `--vbwd-booking-button-secondary-hover-bg` | `.btn.secondary:hover` background-color | `#bdc3c7` |
 | `--vbwd-booking-status-paid-bg` | `.confirmation-banner--paid` background; `.confirmation-banner--authorized` background; `.status-badge.paid` background; `.status-badge.authorized` background | `#dcfce7` |
 | `--vbwd-booking-status-paid-text` | `.confirmation-banner--paid` color; `.confirmation-banner--authorized` color; `.status-badge.paid` color; `.status-badge.authorized` color | `#166534` |
 | `--vbwd-booking-status-pending-bg` | `.confirmation-banner--pending` background; `.status-badge.pending` background | `#fef9c3` |
