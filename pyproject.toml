@@ -16,18 +16,21 @@ dependencies = []
 
 [tool.setuptools]
 # The repo root IS the plugins/theme/ directory; remap it so the wheel exposes
-# the `plugins.theme` package that runtime imports.
+# the `plugins.theme` package that runtime imports. The sub-packages are discovered
+# (and prefixed with `plugins.theme.`) in setup.py — `packages.find` cannot prefix.
 package-dir = { "plugins.theme" = "." }
-packages = [
-    "plugins.theme",
-    "plugins.theme.theme",
-]
 
 [tool.setuptools.package-data]
+# Everything the plugin loads at runtime besides its modules: plugin config JSON, and
+# the templates / translations / stylesheets / static assets under the source dir.
+# Guarded by tests/unit/test_wheel_packaging.py.
 "plugins.theme" = [
     "*.json",
-    "populate_db.py",
 ]
 "plugins.theme.theme" = [
-    "themes/*/templates/**/*.j2",
+    "**/*.j2",
+    "**/*.json",
+    "**/*.css",
+    "**/*.js",
+    "**/*.md",
 ]

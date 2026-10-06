@@ -45,7 +45,10 @@ jobs:
 
       - name: Install Python dependencies
         working-directory: vbwd-backend
+        # setuptools + wheel: tests/unit/test_wheel_packaging.py builds the wheel offline
+        # (pip wheel --no-build-isolation).
         run: |
+          pip install "setuptools>=68" wheel
           pip install -r requirements.txt
           for requirements_file in plugins/*/requirements.txt; do
             pip install -r "${requirements_file}"
