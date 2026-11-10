@@ -6,9 +6,23 @@ An adapter registers each page it renders, at its PUBLIC path, from its
 ``get_blueprint()`` loop), so the theme builds its blueprint from the registry
 once, at mount time, and seals the registry: a later registration raises
 instead of silently never being routed.
+
+S154 D9: plugins owning public fe-user SPA routes (under a configurable base)
+declare them structurally through :class:`FeUserRouteOwner`; catch-all adapters
+read them per request with :func:`resolve_fe_user_route_prefixes`.
 """
+import logging
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Protocol,
+    Sequence,
+    runtime_checkable,
+)
 
 from flask import current_app
 
@@ -25,6 +39,8 @@ SPA_ONLY_PREFIXES = ("/dashboard", "/tuktuk")
 
 # W2 — theme-internal fragments and assets; never a page path.
 THEME_INTERNAL_PREFIX = "/_render"
+
+logger = logging.getLogger(__name__)
 
 PUBLIC_PAGE = "public"
 USER_PAGE = "user"
@@ -56,6 +72,57 @@ class ThemePage:
 def _is_under_prefix(path: str, prefix: str) -> bool:
     """Segment-wise prefix match: ``/dashboard/x`` yes, ``/dashboards`` no."""
     return path == prefix or path.startswith(prefix + "/")
+
+
+def is_under_any_prefix(path: str, prefixes: Iterable[str]) -> bool:
+    """Segment-wise match of ``path`` against any of ``prefixes``."""
+    return any(_is_under_prefix(path, prefix) for prefix in prefixes)
+
+
+@runtime_checkable
+class FeUserRouteOwner(Protocol):
+    """S154 D9 — a plugin whose fe-user companion mounts public SPA routes that no
+    theme adapter renders, possibly under an operator-configurable base.
+
+    Structural on purpose: domain plugins never import the theme (S152 R1), so a
+    plugin opts in by defining this one method and the theme discovers it among
+    the ENABLED plugins (the ``PayoutProvider`` discovery pattern, by shape). It
+    is read per request, so a config change needs no re-registration.
+    """
+
+    def fe_user_route_prefixes(self) -> Sequence[str]:
+        """Absolute, segment-wise path prefixes the fe-user SPA owns (``/base``)."""
+        ...
+
+
+def _is_valid_route_prefix(prefix: str) -> bool:
+    """Absolute and not the root: ``/`` would hand every path to the SPA."""
+    return prefix.startswith("/") and bool(prefix.strip("/"))
+
+
+def collect_fe_user_route_prefixes(plugins: Iterable[object]) -> List[str]:
+    """The valid prefixes declared by every :class:`FeUserRouteOwner` in ``plugins``."""
+    prefixes: List[str] = []
+    for plugin in plugins:
+        if not isinstance(plugin, FeUserRouteOwner):
+            continue
+        for prefix in plugin.fe_user_route_prefixes():
+            if _is_valid_route_prefix(prefix):
+                prefixes.append(prefix)
+            else:
+                logger.warning(
+                    "[theme] ignoring fe-user route prefix %r of %s: not an "
+                    "absolute, non-root path",
+                    prefix,
+                    type(plugin).__name__,
+                )
+    return prefixes
+
+
+def resolve_fe_user_route_prefixes() -> List[str]:
+    """The fe-user route prefixes of the running app's enabled plugins."""
+    plugin_manager = getattr(current_app, "plugin_manager")
+    return collect_fe_user_route_prefixes(plugin_manager.get_enabled_plugins())
 
 
 class ThemePageRegistry:
